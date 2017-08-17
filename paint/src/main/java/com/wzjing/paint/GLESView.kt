@@ -4,10 +4,13 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.opengl.GLSurfaceView
+import android.util.Log
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
 class GLESView(context: Context) : GLSurfaceView(context) {
+
+    private val TAG = "GLESView"
 
     private val renderer = Renderer()
     private val bitmap = BitmapFactory.decodeResource(context.resources, R.mipmap.ic_launcher)
@@ -16,6 +19,7 @@ class GLESView(context: Context) : GLSurfaceView(context) {
         setEGLContextClientVersion(2)
         setRenderer(renderer)
         renderMode = RENDERMODE_CONTINUOUSLY
+        Log.i(TAG, "ByteCount: ${bitmap.byteCount} ARGB8888:${bitmap.width*bitmap.height*32/4} RGB565:${bitmap.width*bitmap.height*16/4}")
     }
 
     inner class Renderer: GLSurfaceView.Renderer {

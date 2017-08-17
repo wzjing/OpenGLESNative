@@ -65,11 +65,13 @@ auto FRAGMENT_SHADER_CODE =
 float mTexVertex[8] = {0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f};
 float mPosVertex[8] = {-1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f};
 
-int mTexSamplehandle;
-int mTexCoordHandle;
-int mPosCoordHandle;
+GLuint mTexSamplehandle;
+GLuint mTexCoordHandle;
+GLuint mPosCoordHandle;
 
 GLuint mTextures[2];
+
+GLuint gProgram;
 
 Frame frame;
 
