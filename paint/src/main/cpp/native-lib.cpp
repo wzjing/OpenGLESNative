@@ -11,6 +11,35 @@ JNICALL Java_com_wzjing_paint_GLESView_step(JNIEnv *env, jobject obj) {
     renderFrame();
 }
 
+const char* VERTEX_SHADER_CODE =
+        "attribute vec4 a_position;\n"
+                "attribute vec2 a_texcoord;\n"
+                "varying vec2 v_texcoord;\n"
+                "void main() {\n"
+                "  gl_Position = a_position;\n"
+                "  v_texcoord = a_texcoord;\n"
+                "}\n";
+const char* FRAGMENT_SHADER_CODE =
+        "precision mediump float;\n"
+                "uniform sampler2D tex_sampler;\n"
+                "varying vec2 v_texcoord;\n"
+                "void main() {\n"
+                "  gl_FragColor = texture2D(tex_sampler, v_texcoord);\n"
+                "}\n";
+
+float mTexVertex[8] = {0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f};
+float mPosVertex[8] = {-1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f};
+
+GLuint mTexSamplehandle;
+GLuint mTexCoordHandle;
+GLuint mPosCoordHandle;
+
+GLuint texture;
+
+GLuint gProgram;
+
+Frame frame;
+
 bool setGraphics(JNIEnv* env, int w, int h, jobject bitmap) {
     printGlString("Version", GL_VERSION);
     printGlString("Vendor", GL_VENDOR);
@@ -51,11 +80,11 @@ bool setGraphics(JNIEnv* env, int w, int h, jobject bitmap) {
     mTexCoordHandle = glGetAttribLocation(gProgram, "a_texcoord");
     mPosCoordHandle = glGetAttribLocation(gProgram, "a_position");
 
-    glGenTextures(2, mTextures);
+    glGenTextures(1, &texture);
     checkGlError("gen Textures");
-    glBindTexture(GL_TEXTURE_2D, mTextures[0]);
+    glBindTexture(GL_TEXTURE_2D, texture);
     checkGlError("bind Textures");
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, frame.w, frame.h, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, frame.pixels);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, frame.w, frame.h, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, 0);
     checkGlError("add a picture");
     initTextureParams();
 
@@ -201,6 +230,6 @@ GLuint createProgram(const char *pVertexSource, const char *pFragmentSource) {
 void initTextureParams() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }

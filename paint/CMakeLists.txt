@@ -67,4 +67,4 @@ set(THIRD_PART_LIBS cpufeatures IlmImf libjasper libtiff libjpeg libpng libwebp 
 
 #set(ANDROID_ALLOW_UNDEFINED_SYMBOLS TRUE)
 
-target_link_libraries(native-lib ${OPENCV_LIBS} log jnigraphics android EGL GLESv2)
+target_link_libraries(native-lib ${OPENCV_LIBS} log jnigraphics android EGL GLESv2 z)

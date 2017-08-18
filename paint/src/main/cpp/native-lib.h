@@ -46,35 +46,6 @@ typedef struct Frame {
     void * pixels;
 } Frame;
 
-auto VERTEX_SHADER_CODE =
-        "attribute vec4 a_position;\n"
-        "attribute vec2 a_texcoord;\n"
-        "varying vec2 v_texcoord;\n"
-        "void main() {\n"
-        "  gl_Position = a_position;\n"
-        "  v_texcoord = a_texcoord;\n"
-        "}\n";
-auto FRAGMENT_SHADER_CODE =
-        "precision mediump float;\n"
-        "uniform sampler2D tex_sampler;\n"
-        "varying vec2 v_texcoord;\n"
-        "void main() {\n"
-        "  gl_FragColor = texture2D(tex_sampler, v_texcoord);\n"
-        "}\n";
-
-float mTexVertex[8] = {0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f};
-float mPosVertex[8] = {-1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f};
-
-GLuint mTexSamplehandle;
-GLuint mTexCoordHandle;
-GLuint mPosCoordHandle;
-
-GLuint mTextures[2];
-
-GLuint gProgram;
-
-Frame frame;
-
 GLuint loadShader(GLenum shaderType, const char* pSource);
 
 GLuint createProgram(const char* pVertexSource, const char* pFragmentSource);
