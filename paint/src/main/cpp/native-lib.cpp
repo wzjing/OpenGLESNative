@@ -11,6 +11,7 @@ JNICALL Java_com_wzjing_paint_GLESView_step(JNIEnv *env, jobject obj) {
     renderFrame();
 }
 
+//Vertex Shader(Processing vertex position)
 const char* VERTEX_SHADER_CODE =
         "attribute vec4 a_position;\n"
                 "attribute vec2 a_texcoord;\n"
@@ -19,6 +20,7 @@ const char* VERTEX_SHADER_CODE =
                 "  gl_Position = a_position;\n"
                 "  v_texcoord = a_texcoord;\n"
                 "}\n";
+//Fragment Shader(Processing pixels)
 const char* FRAGMENT_SHADER_CODE =
         "precision mediump float;\n"
                 "uniform sampler2D tex_sampler;\n"
@@ -132,6 +134,7 @@ void renderFrame() {
     glUseProgram(gProgram);
     checkGlError("glUseProgram");
 
+
     // 3、vertex
     glVertexAttribPointer(mTexCoordHandle, 2, GL_FLOAT, GL_FALSE, 0, mTexVertex);
     checkGlError("TexVertex");
@@ -147,7 +150,7 @@ void renderFrame() {
     //5、Enable Texture draw
     glActiveTexture(GL_TEXTURE0);
     checkGlError("Active texture");
-    glBindTexture(GL_TEXTURE_2D, mTextures[0]);
+    glBindTexture(GL_TEXTURE_2D, texture);
     checkGlError("Bind texture");
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, frame.w, frame.h, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, frame.pixels);
     checkGlError("draw image");
@@ -155,7 +158,7 @@ void renderFrame() {
     checkGlError("glUniform1i");
 
     //5、Draw vertex
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     checkGlError("clear color");
     glClear(GL_COLOR_BUFFER_BIT);
     checkGlError("clear");

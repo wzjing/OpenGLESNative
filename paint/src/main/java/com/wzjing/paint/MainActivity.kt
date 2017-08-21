@@ -7,6 +7,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(GLESView(applicationContext))
+        setContentView(MySurfaceView(applicationContext))
     }
 }

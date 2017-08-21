@@ -108,7 +108,7 @@ class MyRenderer(var frame: Bitmap) : GLSurfaceView.Renderer {
         checkGLerror("glBindTexture")
         GLES20.glUniform1i(mTexSampleHandle!!, 0)
 
-        GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
+        GLES20.glClearColor(1.0f, 1.0f, 1.0f, 1.0f)
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4)
         Log.i("MyRenderer", "drawFrame: ${System.currentTimeMillis()-start} ms")
