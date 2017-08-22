@@ -13,28 +13,33 @@ JNICALL Java_com_wzjing_paint_GLESView_step(JNIEnv *env, jobject obj) {
 
 //Vertex Shader(Processing vertex position)
 const char* VERTEX_SHADER_CODE =
-        "attribute vec4 a_position;\n"
-                "attribute vec2 a_texcoord;\n"
-                "varying vec2 v_texcoord;\n"
+                "layout(location = 0) in vec3 position;\n"
+                "layout(location = 1) in vec3 color;\n"
+                "layout(location = 2) in vec2 texCoord;\n"
+                "out vec3 VertColor;\n"
+                "out vec2 TextCoord;\n"
                 "void main() {\n"
-                "  gl_Position = a_position;\n"
-                "  v_texcoord = a_texcoord;\n"
+                "  gl_Position = vec4(position, 1.0);\n"
+                "  VertColor = color;\n"
+                "  TextCoord = textCoord;\n"
                 "}\n";
 //Fragment Shader(Processing pixels)
 const char* FRAGMENT_SHADER_CODE =
-        "precision mediump float;\n"
-                "uniform sampler2D tex_sampler;\n"
-                "varying vec2 v_texcoord;\n"
+                "precision mediump float;\n"
+                "in vec3 VertColor;\n"
+                "in vec2 TextCoord;\n"
+                "uniform sampler2D tex;\n"
+                "out vec4 color;\n"
                 "void main() {\n"
-                "  gl_FragColor = texture2D(tex_sampler, v_texcoord);\n"
+                "  color = texture2D(tex, TextCoord);\n"
                 "}\n";
 
 float mTexVertex[8] = {0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f};
 float mPosVertex[8] = {-1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f};
 
-GLuint mTexSamplehandle;
-GLuint mTexCoordHandle;
-GLuint mPosCoordHandle;
+//GLuint mTexSamplehandle;
+//GLuint mTexCoordHandle;
+//GLuint mPosCoordHandle;
 
 GLuint texture;
 
@@ -78,9 +83,9 @@ bool setGraphics(JNIEnv* env, int w, int h, jobject bitmap) {
         return false;
     }
 
-    mTexSamplehandle = glGetUniformLocation(gProgram, "tex_sampler");
-    mTexCoordHandle = glGetAttribLocation(gProgram, "a_texcoord");
-    mPosCoordHandle = glGetAttribLocation(gProgram, "a_position");
+//    mTexSamplehandle = glGetUniformLocation(gProgram, "tex_sampler");
+//    mTexCoordHandle = glGetAttribLocation(gProgram, "a_texcoord");
+//    mPosCoordHandle = glGetAttribLocation(gProgram, "a_position");
 
     glGenTextures(1, &texture);
     checkGlError("gen Textures");
@@ -135,27 +140,32 @@ void renderFrame() {
     checkGlError("glUseProgram");
 
 
-    // 3、vertex
-    glVertexAttribPointer(mTexCoordHandle, 2, GL_FLOAT, GL_FALSE, 0, mTexVertex);
+    // 3、vertex position
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8* sizeof(GL_FLOAT), (GLvoid*)0);
     checkGlError("TexVertex");
-    glEnableVertexAttribArray(mTexCoordHandle);
+    glEnableVertexAttribArray(0);
     checkGlError("TexVertexHandle");
 
-    // 4、position
-    glVertexAttribPointer(mPosCoordHandle, 2, GL_FLOAT, GL_FALSE, 0, mPosVertex);
+    // 4、vertex color
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8* sizeof(GL_FLOAT), (GLvoid*)(3* sizeof(GL_FLOAT)));
     checkGlError("PosVertex");
-    glEnableVertexAttribArray(mPosCoordHandle);
+    glEnableVertexAttribArray(1);
+    checkGlError("PosVertexHandle");
+
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8* sizeof(GL_FLOAT), (GLvoid*)(6* sizeof(GL_FLOAT)));
+    checkGlError("PosVertex");
+    glEnableVertexAttribArray(2);
     checkGlError("PosVertexHandle");
 
     //5、Enable Texture draw
     glActiveTexture(GL_TEXTURE0);
-    checkGlError("Active texture");
+    checkGlError("Active texture 0");
     glBindTexture(GL_TEXTURE_2D, texture);
     checkGlError("Bind texture");
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, frame.w, frame.h, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, frame.pixels);
-    checkGlError("draw image");
-    glUniform1i(mTexSamplehandle, 0);
-    checkGlError("glUniform1i");
+//    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, frame.w, frame.h, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, frame.pixels);
+//    checkGlError("draw image");
+    glUniform1i(glGetUniformLocation(gProgram, "tex"), 0);
+    checkGlError("bind sampler");
 
     //5、Draw vertex
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -233,6 +243,6 @@ GLuint createProgram(const char *pVertexSource, const char *pFragmentSource) {
 void initTextureParams() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
