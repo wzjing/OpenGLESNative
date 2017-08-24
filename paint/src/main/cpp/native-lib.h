@@ -2,24 +2,13 @@
 #define FACE_NATIVE_LIB_H
 
 #include <jni.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
-#include <android/log.h>
 #include <android/bitmap.h>
-#include <opencv2/core.hpp>
-#include <opencv2/imgproc.hpp>
-#include <opencv2/imgcodecs.hpp>
+#include "native-utils.h"
+#include "gl-utils.h"
 
-using namespace cv;
-using namespace std;
-
-#define TAG "native-log"
-#define LOGD(tag, format, ...) __android_log_print(ANDROID_LOG_DEBUG, tag, format, ## __VA_ARGS__)
-#define LOGI(tag, format, ...) __android_log_print(ANDROID_LOG_INFO, tag, format, ## __VA_ARGS__)
-#define LOGE(tag, format, ...) __android_log_print(ANDROID_LOG_ERROR, tag, format, ## __VA_ARGS__)
+using namespace nu;
 
 extern "C" {
 JNIEXPORT void
@@ -29,28 +18,11 @@ JNIEXPORT void
 JNICALL Java_com_wzjing_paint_GLESView_step(JNIEnv * env, jobject);
 }
 
-inline void checkGlError(const char* op) {
-    for (GLint error = glGetError(); error ; error = glGetError()) {
-        LOGE(TAG, "Operation: %s Error: 0x%x", op, error);
-    }
-}
-
-inline void printGlString(const char* name, GLenum v) {
-    const char* s = (const char *) glGetString(v);
-    LOGI(TAG, "OpenGL ES: %s = %s", name, s);
-}
-
 typedef struct Frame {
     int w;
     int h;
     void * pixels;
 } Frame;
-
-GLuint loadShader(GLenum shaderType, const char* pSource);
-
-GLuint createProgram(const char* pVertexSource, const char* pFragmentSource);
-
-void initTextureParams();
 
 bool setGraphics(JNIEnv* env, int w, int h, jobject bitmap);
 
