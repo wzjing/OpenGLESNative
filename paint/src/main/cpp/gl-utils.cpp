@@ -7,12 +7,11 @@ void checkGlError(const char* op) {
 }
 
 void printGlInfo() {
-    const char* s = (const char *) glGetString(v);
-    LOGI(TAG, "OpenGL ES: %30s = %s", "GL Version", glGetString(GL_VERSION));
-    LOGI(TAG, "OpenGL ES: %30s = %s", "GL Shader Version", glGetString(GL_SHADING_LANGUAGE_VERSION));
-    LOGI(TAG, "OpenGL ES: %30s = %s", "GL Vender", glGetString(GL_VENDOR));
-    LOGI(TAG, "OpenGL ES: %30s = %s", "GL Renderer", glGetString(GL_RENDERER));
-    LOGI(TAG, "OpenGL ES: %30s = %s", "GL Extensions", glGetString(GL_EXTENSIONS));
+    LOGI(TAG, "OpenGL ES: %-30s : %s", "GL Version", glGetString(GL_VERSION));
+    LOGI(TAG, "OpenGL ES: %-30s : %s", "GL Shader Version", glGetString(GL_SHADING_LANGUAGE_VERSION));
+    LOGI(TAG, "OpenGL ES: %-30s : %s", "GL Vender", glGetString(GL_VENDOR));
+    LOGI(TAG, "OpenGL ES: %-30s : %s", "GL Renderer", glGetString(GL_RENDERER));
+    LOGI(TAG, "OpenGL ES: %-30s : %s", "GL Extensions", glGetString(GL_EXTENSIONS));
 }
 
 GLuint loadShader(GLenum shaderType, const char *pSource) {
@@ -29,7 +28,7 @@ GLuint loadShader(GLenum shaderType, const char *pSource) {
                 char *buf = (char *) malloc(infoLen);
                 if (buf) {
                     glGetShaderInfoLog(shader, infoLen, NULL, buf);
-                    LOGE(TAG, "Could not compile shader %d: \n%s\n", shaderType, buf);
+                    LOGE(TAG, "Could not compile shader %s: \n%s\n", shaderType == GL_VERTEX_SHADER ? "Vertex Shader": "Fragment Shader", buf);
                     free(buf);
                 }
                 glDeleteShader(shader);

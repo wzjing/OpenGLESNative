@@ -2,6 +2,7 @@
 #define PAINT_NATIVE_UTILS_H
 
 #include <stdlib.h>
+#include <iostream>
 #include <android/log.h>
 #include <android/asset_manager_jni.h>
 #include <android/asset_manager.h>
@@ -18,7 +19,9 @@ namespace nu {
 
 }
 
-char * loadAssetFile(JNIEnv * env, const char * filename);
+using namespace std;
+
+char* loadAssetFile(JNIEnv * env, const char * filename);
 
 AAssetManager * getAssetManager(JNIEnv * env);
 

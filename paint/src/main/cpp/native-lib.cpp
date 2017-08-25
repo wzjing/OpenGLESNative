@@ -12,13 +12,22 @@ JNICALL Java_com_wzjing_paint_GLESView_step(JNIEnv *env, jobject obj) {
     renderFrame();
 }
 
-float textureBuffer[8] = {0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f};
-float vertexBuffer[8] = {-1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f};
+char *pix16(char *data) {
+    char pixs[16][255];
+    for (int i = 0; i < 16; i++) {
+        sprintf(pixs[i], "%s %02x", i < 1 ? "" : pixs[i - 1], data[i]);
+    }
+    return pixs[15];
+}
 
-GLuint sampler2DHandle;
-GLuint vertexCoordHandle;
-GLuint textureCoordHandle;
-GLuint matrixHandle;
+float vertexBuffer[8] = {-1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f};
+float textureBuffer[8] = {0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f};
+
+GLint sampler2DHandle;
+GLint vertexCoordHandle;
+GLint textureCoordHandle;
+GLint matrixHandle;
+GLint timeHandle;
 
 float projectionMatrix[16];
 
@@ -26,7 +35,7 @@ GLuint texture;
 
 GLuint gProgram;
 
-Frame frame;
+static Frame frame;
 
 bool setGraphics(JNIEnv *env, int w, int h, jobject bitmap) {
 
@@ -46,20 +55,19 @@ bool setGraphics(JNIEnv *env, int w, int h, jobject bitmap) {
         LOGD(TAG, "nativeProcess(): Bitmap Info: %d x %d <format: %d>", bmp_info.width,
              bmp_info.height,
              bmp_info.format);
-    void *bmp_pixels = 0;
-    if (AndroidBitmap_lockPixels(env, bitmap, &bmp_pixels) < 0) {
+    if (AndroidBitmap_lockPixels(env, bitmap, &frame.pixels) < 0) {
         LOGE(TAG, "nativeProcess(): Unable to lock bitmap pixels");
         return false;
     }
 
-    if (!bmp_pixels) {
+    if (!frame.pixels) {
         LOGE(TAG, "nativeProcess(): didn't get any pixels");
         return false;
     }
     frame.w = bmp_info.width;
     frame.h = bmp_info.height;
-    frame.pixels = bmp_pixels;
-//    AndroidBitmap_unlockPixels(env, bitmap);
+
+    LOGI(TAG, "Pix: %s", pix16((char*)frame.pixels));
 
     LOGI(TAG, "setupGraphics(%d, %d)", w, h);
     gProgram = createProgram(VERTEX_SHADER_CODE, FRAGMENT_SHADER_CODE);
@@ -68,16 +76,23 @@ bool setGraphics(JNIEnv *env, int w, int h, jobject bitmap) {
         return false;
     }
 
-    sampler2DHandle = (GLuint) glGetUniformLocation(gProgram, "tex");
-    vertexCoordHandle = (GLuint) glGetAttribLocation(gProgram, "position");
-    textureCoordHandle = (GLuint) glGetAttribLocation(gProgram, "textureCoord");
-    matrixHandle = (GLuint) glGetUniformLocation(gProgram, "uMatrix");
+    sampler2DHandle = glGetUniformLocation(gProgram, "tex");
+    vertexCoordHandle = glGetAttribLocation(gProgram, "vertexCoord");
+    textureCoordHandle = glGetAttribLocation(gProgram, "textureCoord");
+    matrixHandle = glGetUniformLocation(gProgram, "uMatrix");
+    timeHandle = glGetUniformLocation(gProgram, "time");
+
+    LOGI(TAG, "samper2DHandle:     %d", sampler2DHandle);
+    LOGI(TAG, "vertexCoordhandle:  %d", vertexCoordHandle);
+    LOGI(TAG, "textureCoordhandle: %d", textureCoordHandle);
+    LOGI(TAG, "matrixHandle:       %d", matrixHandle);
+    LOGI(TAG, "timeHandle:         %d", timeHandle);
 
     glGenTextures(1, &texture);
     checkGlError("gen Textures");
     glBindTexture(GL_TEXTURE_2D, texture);
     checkGlError("bind Textures");
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, frame.w, frame.h, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, bmp_pixels);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, frame.w, frame.h, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, frame.pixels);
     checkGlError("add a picture");
 
     //Init Texture parameters
@@ -89,32 +104,7 @@ bool setGraphics(JNIEnv *env, int w, int h, jobject bitmap) {
 
     glViewport(0, 0, w, h);
     checkGlError("glViewport");
-
-    if (vertexBuffer != NULL) {
-        float imgAspectRatio = (float) frame.w / frame.h;
-        float viewAspectRatio = (float) w / h;
-        float relativeAspectRatio = viewAspectRatio / imgAspectRatio;
-        float x0, y0, x1, y1;
-        if (relativeAspectRatio > 1.0f) {
-            x0 = -1.0f / relativeAspectRatio;
-            y0 = -1.0f;
-            x1 = 1.0f / relativeAspectRatio;
-            y1 = 1.0f;
-        } else {
-            x0 = -1.0f;
-            y0 = -relativeAspectRatio;
-            x1 = 1.0f;
-            y1 = relativeAspectRatio;
-        }
-        vertexBuffer[0] = x0;
-        vertexBuffer[1] = y0;
-        vertexBuffer[2] = x1;
-        vertexBuffer[3] = y0;
-        vertexBuffer[4] = x0;
-        vertexBuffer[5] = y1;
-        vertexBuffer[6] = x1;
-        vertexBuffer[7] = y1;
-    }
+    LOGI(TAG, "Width: %d, Height: %d", w, h);
 
     return true;
 }
@@ -130,28 +120,40 @@ void renderFrame() {
     glUseProgram(gProgram);
     checkGlError("glUseProgram");
 
+    glUniform1f(timeHandle, (float)clock()/CLOCKS_PER_SEC);
+
     // Matrix Handle
     glUniformMatrix4fv(matrixHandle, 1, GL_FALSE, projectionMatrix);
+    checkGlError("set Matrix");
 
     // Vertex Handle
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 12 * sizeof(GL_FLOAT), vertexBuffer);
+    glVertexAttribPointer(vertexCoordHandle, 2, GL_FLOAT, GL_FALSE, 2* sizeof(float), vertexBuffer);
     checkGlError("VertexBuffer");
     glEnableVertexAttribArray(vertexCoordHandle);
     checkGlError("vertexHandle");
 
     // Texture Handle
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GL_FLOAT), textureBuffer);
-    checkGlError("PosVertex");
+    glVertexAttribPointer(textureCoordHandle, 2, GL_FLOAT, GL_FALSE, 2* sizeof(GL_UNSIGNED_BYTE), textureBuffer);
+    checkGlError("textureBuffer");
     glEnableVertexAttribArray(textureCoordHandle);
-    checkGlError("PosVertexHandle");
+    checkGlError("textureHandle");
 
     //
     glActiveTexture(GL_TEXTURE0);
+    checkGlError("activeTexture");
     glBindTexture(GL_TEXTURE_2D, texture);
-    glUniform1i(sampler2DHandle, 0);
+    checkGlError("bind Texture");
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, frame.w, frame.h, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, frame.pixels);
+    checkGlError("glTexImage2D");
+    glUniform1i(glGetUniformLocation(gProgram, "tex"), 0);
+    checkGlError("set tex sampler");
 
-    // Draw Texture
-    glDrawElements(GL_TRIANGLE_STRIP, frame.w*frame.h* sizeof(GL_UNSIGNED_SHORT_5_6_5), GL_UNSIGNED_SHORT_5_6_5, frame.pixels);
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    checkGlError("glDrawArray");
 
-    LOGD(TAG, "OpenGL ES frame: %d", (int) ((clock() - start) / 1000));
+    LOGD(TAG, "Frame Info: %d x %d Data: %02x", frame.w, frame.h, ((unsigned char*)frame.pixels)[100]);
+
+    //LOGD(TAG, "OpenGL ES frame: %d", (int) ((clock() - start) / 1000));
 }

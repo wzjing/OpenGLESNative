@@ -8,11 +8,11 @@ public class App: Application() {
 
     override fun onCreate() {
         super.onCreate()
-        appContext = applicationContext
+        assetManager = applicationContext.assets
+
     }
 
     companion object {
-        public lateinit var appContext: Context
-        @JvmStatic public var assetManager = appContext.assets
+        @JvmStatic public var assetManager :AssetManager? = null
     }
 }

@@ -1,10 +1,9 @@
 uniform mat4 uMatrix;
 attribute vec4 vertexCoord;
-attribute vec4 textureCoord;
-varying vec2 gl_fragCoord;
-
+attribute vec2 textureCoord;
+varying vec2 fragCoord;
 void main()
 {
-    gl_Position = uMatrix * vertexCoord;
-    gl_fragCoord = textureCoord;
+    fragCoord = textureCoord;
+    gl_Position = vertexCoord;
 }

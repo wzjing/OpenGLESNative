@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.opengl.GLSurfaceView
+import android.support.v4.media.MediaMetadataCompat
 import android.util.Log
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
@@ -13,9 +14,13 @@ class GLESView(context: Context) : GLSurfaceView(context) {
     private val TAG = "GLESView"
 
     private val renderer = Renderer()
-    private val bitmap = BitmapFactory.decodeResource(context.resources, R.mipmap.ic_launcher)
+
+    private val bitmap : Bitmap
 
     init {
+        val options = BitmapFactory.Options()
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888
+        bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.sample_720, options)
         setEGLContextClientVersion(2)
         setRenderer(renderer)
         renderMode = RENDERMODE_CONTINUOUSLY
