@@ -8,8 +8,6 @@
 #include "native-utils.h"
 #include "gl-utils.h"
 
-using namespace nu;
-
 extern "C" {
 JNIEXPORT void
 JNICALL Java_com_wzjing_paint_GLESView_initGLES(JNIEnv * env, jobject obj, jint w, jint h, jobject bitmap);

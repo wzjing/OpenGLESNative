@@ -18,7 +18,7 @@ android {
         externalNativeBuild {
             cmake {
                 cppFlags "-std=c++11 -D__STDC_FORMAT_MACROS"
-                abiFilters "armeabi"
+                abiFilters "armeabi", "x86", "arm64-v8a"
             }
         }
 
@@ -47,6 +47,26 @@ android {
             externalNativeBuild {
                 cmake {
                     abiFilters "armeabi"
+                }
+            }
+            dimension "abi"
+        }
+
+        arm64 {
+            versionNameSuffix "_arm64"
+            externalNativeBuild {
+                cmake {
+                    abiFilters "arm64-v8a"
+                }
+            }
+            dimension "abi"
+        }
+
+        x86 {
+            versionNameSuffix "_x86"
+            externalNativeBuild {
+                cmake {
+                    abiFilters "x86"
                 }
             }
             dimension "abi"

@@ -40,7 +40,7 @@ class MySurfaceView(context: Context): GLSurfaceView(context), SurfaceHolder.Cal
 
     override fun surfaceCreated(holder: SurfaceHolder?) {
         super.surfaceCreated(holder)
-        bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.sample_720)
+        bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.person)
         rending = true
 
         bg {

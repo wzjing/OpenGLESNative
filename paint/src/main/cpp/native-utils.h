@@ -6,8 +6,7 @@
 #include <android/log.h>
 #include <android/asset_manager_jni.h>
 #include <android/asset_manager.h>
-
-namespace nu {
+#include <android/bitmap.h>
 
 #define TAG "native-log"
 
@@ -17,13 +16,21 @@ namespace nu {
 #define LOGW(tag, format, ...) __android_log_print(ANDROID_LOG_WARNING, tag, format, ## __VA_ARGS__)
 #define LOGE(tag, format, ...) __android_log_print(ANDROID_LOG_ERROR, tag, format, ## __VA_ARGS__)
 
-}
-
 using namespace std;
 
 char* loadAssetFile(JNIEnv * env, const char * filename);
 
 AAssetManager * getAssetManager(JNIEnv * env);
 
+jobject getCurrentContext(JNIEnv * env);
+
+typedef struct{
+    int width;
+    int height;
+    int format;
+    void* pixels = 0;
+} Bitmap;
+
+Bitmap* getBitmap(JNIEnv* env, jobject bitmap);
 
 #endif //PAINT_NATIVE_UTILS_H

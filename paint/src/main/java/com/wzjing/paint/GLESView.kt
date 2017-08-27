@@ -1,5 +1,7 @@
 package com.wzjing.paint
 
+import android.app.Activity
+import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -20,7 +22,8 @@ class GLESView(context: Context) : GLSurfaceView(context) {
     init {
         val options = BitmapFactory.Options()
         options.inPreferredConfig = Bitmap.Config.ARGB_8888
-        bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.sample_720, options)
+        bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.person, options)
+
         setEGLContextClientVersion(2)
         setRenderer(renderer)
         renderMode = RENDERMODE_CONTINUOUSLY
