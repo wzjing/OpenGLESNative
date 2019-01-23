@@ -6,4 +6,4 @@ add_library( native-lib
              src/main/cpp/gl-utils.cpp
              src/main/cpp/native-utils.cpp)
 
-target_link_libraries(native-lib log jnigraphics android EGL GLESv2 z)
+target_link_libraries(native-lib log jnigraphics android EGL GLESv3 z)

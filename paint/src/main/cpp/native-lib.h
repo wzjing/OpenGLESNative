@@ -10,7 +10,7 @@
 
 extern "C" {
 JNIEXPORT void
-JNICALL Java_com_wzjing_paint_GLESView_initGLES(JNIEnv * env, jobject obj, jint w, jint h, jobject bitmap);
+JNICALL Java_com_wzjing_paint_GLESView_initGLES(JNIEnv * env, jobject, jint w, jint h, jobject bitmap);
 
 JNIEXPORT void
 JNICALL Java_com_wzjing_paint_GLESView_step(JNIEnv * env, jobject);

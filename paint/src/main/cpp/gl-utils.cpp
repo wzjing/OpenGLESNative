@@ -12,21 +12,21 @@ void checkGlError(const char* op) {
             case GL_INVALID_OPERATION:
                 LOGE(TAG, "Operation: %s Error: 0x%x(%s)", op, error, "Invalid operation");
                 break;
-            case GL_STACK_OVERFLOW_KHR:
-                LOGE(TAG, "Operation: %s Error: 0x%x(%s)", op, error, "Stack Overflow");
-                break;
-            case GL_STACK_UNDERFLOW_KHR:
-                LOGE(TAG, "Operation: %s Error: 0x%x(%s)", op, error, "Stack Underflow");
-                break;
+//            case GL_STACK_OVERFLOW_KHR: // v2
+//                LOGE(TAG, "Operation: %s Error: 0x%x(%s)", op, error, "Stack Overflow");
+//                break;
+//            case GL_STAC: // v2
+//                LOGE(TAG, "Operation: %s Error: 0x%x(%s)", op, error, "Stack Underflow");
+//                break;
             case GL_OUT_OF_MEMORY:
                 LOGE(TAG, "Operation: %s Error: 0x%x(%s)", op, error, "Out Of Memory");
                 break;
             case GL_INVALID_FRAMEBUFFER_OPERATION:
                 LOGE(TAG, "Operation: %s Error: 0x%x(%s)", op, error, "Frame Buffer Error");
                 break;
-            case GL_CONTEXT_LOST_KHR:
-                LOGE(TAG, "Operation: %s Error: 0x%x(%s)", op, error, "Context Lost(Graphic Card Reset)");
-                break;
+//            case GL_CONTEXT_LOST_KHR: v2
+//                LOGE(TAG, "Operation: %s Error: 0x%x(%s)", op, error, "Context Lost(Graphic Card Reset)");
+//                break;
             default:
                 LOGE(TAG, "Operation: %s Error: 0x%x(%s)", op, error, "Unknown Error");
                 break;
@@ -53,7 +53,7 @@ GLuint loadShader(GLenum shaderType, const char *pSource) {
             GLint infoLen = 0;
             glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLen);
             if (infoLen) {
-                char *buf = (char *) malloc(infoLen);
+                char buf[infoLen];
                 if (buf) {
                     glGetShaderInfoLog(shader, infoLen, NULL, buf);
                     LOGE(TAG, "Could not compile shader %s: \n%s\n", shaderType == GL_VERTEX_SHADER ? "Vertex Shader": "Fragment Shader", buf);
@@ -88,7 +88,7 @@ GLuint createProgram(const char *pVertexSource, const char *pFragmentSource) {
             GLint bufLength = 0;
             glGetProgramiv(program, GL_INFO_LOG_LENGTH, &bufLength);
             if (bufLength) {
-                char *buf = (char *) malloc(bufLength);
+                char buf[bufLength];
                 if (buf) {
                     glGetProgramInfoLog(program, bufLength, NULL, buf);
                     LOGE(TAG, "Could not link program:\n%s\n", buf);

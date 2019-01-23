@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.wzjing.paint"
-        minSdkVersion 14
+        minSdkVersion 19
         targetSdkVersion 28
         versionCode 2
         versionName "1.1"

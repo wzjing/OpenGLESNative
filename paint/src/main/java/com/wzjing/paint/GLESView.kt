@@ -19,7 +19,7 @@ class GLESView(context: Context) : GLSurfaceView(context) {
     init {
         val options = BitmapFactory.Options()
         options.inPreferredConfig = Bitmap.Config.ARGB_8888
-        bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.person, options)
+        bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.pikachu, options)
 
         setEGLContextClientVersion(2)
         setRenderer(renderer)

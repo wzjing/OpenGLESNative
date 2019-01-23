@@ -36,7 +36,7 @@ class MySurfaceView(context: Context): GLSurfaceView(context), SurfaceHolder.Cal
 
     override fun surfaceCreated(holder: SurfaceHolder?) {
         super.surfaceCreated(holder)
-        bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.person)
+        bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.pikachu)
         rending = true
 
         Thread {
