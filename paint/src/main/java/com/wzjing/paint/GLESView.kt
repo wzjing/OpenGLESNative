@@ -1,12 +1,9 @@
 package com.wzjing.paint
 
-import android.app.Activity
-import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.opengl.GLSurfaceView
-import android.support.v4.media.MediaMetadataCompat
 import android.util.Log
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10

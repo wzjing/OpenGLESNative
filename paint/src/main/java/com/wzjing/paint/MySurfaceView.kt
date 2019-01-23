@@ -7,8 +7,6 @@ import android.graphics.Rect
 import android.opengl.GLSurfaceView
 import android.util.Log
 import android.view.SurfaceHolder
-import android.view.SurfaceView
-import org.jetbrains.anko.coroutines.experimental.bg
 
 class MySurfaceView(context: Context): GLSurfaceView(context), SurfaceHolder.Callback2 {
 
@@ -29,9 +27,7 @@ class MySurfaceView(context: Context): GLSurfaceView(context), SurfaceHolder.Cal
     }
 
     private fun drawFarme() {
-        val canvas = holder.lockCanvas()
-        if (canvas == null)
-            return
+        val canvas = holder.lockCanvas() ?: return
         val start: Long = System.currentTimeMillis()
         canvas.drawBitmap(bitmap!!, Rect(0, 0, bitmap?.width?:0, bitmap?.height?:0), Rect(0, 0, canvas.width, canvas.height), null)
         Log.i(TAG, "Frame time: ${System.currentTimeMillis()-start}")
@@ -43,7 +39,7 @@ class MySurfaceView(context: Context): GLSurfaceView(context), SurfaceHolder.Cal
         bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.person)
         rending = true
 
-        bg {
+        Thread {
             while(rending) {
 //                val start: Long = System.currentTimeMillis()
 //                myRenderer.update(frame)
@@ -51,7 +47,7 @@ class MySurfaceView(context: Context): GLSurfaceView(context), SurfaceHolder.Cal
 //                Log.i(TAG, "Frame time: ${System.currentTimeMillis()-start} ms")
                 drawFarme()
             }
-        }
+        }.start()
 
     }
 
