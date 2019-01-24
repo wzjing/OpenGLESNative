@@ -17,8 +17,6 @@ char* loadAssetFile(JNIEnv *env, const char *filename) {
         LOGE(TAG, "Read assset error: %d", ret);
         exit(0);
     }
-    else
-        LOGI(TAG, "Asset Content: \n%s", buffer);
     AAsset_close(asset);
     return buffer;
 }

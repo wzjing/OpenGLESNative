@@ -99,6 +99,7 @@ void renderFrame() {
     glUseProgram(gProgram);
     checkGlError("glUseProgram");
 
+
     glUniform1f(timeHandle, (float) clock() / CLOCKS_PER_SEC);
 
     glUniform2f(resolutionHandle, size[0], size[1]);
