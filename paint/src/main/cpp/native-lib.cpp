@@ -13,14 +13,6 @@ JNICALL Java_com_wzjing_paint_GLESView_step(JNIEnv *, jobject) {
     renderFrame();
 }
 
-void pix16(const char *tag, char *data) {
-    char pixels[16][255];
-    for (int i = 0; i < 16; i++) {
-        sprintf(pixels[i], "%s %02x", i < 1 ? "" : pixels[i - 1], data[i]);
-    }
-    LOGI(TAG, "%s: %s", tag, pixels[15]);
-}
-
 float size[2];
 
 float vertexBuffer[8] = {-1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f};
@@ -47,17 +39,14 @@ bool setGraphics(JNIEnv *env, int w, int h, jobject bitmap) {
     size[1] = h;
 
     //Vertex Shader(Processing vertex position)
-    const char *VERTEX_SHADER_CODE = loadAssetFile(env, "shaders/vertex_shader.glsl");
+    const char *VERTEX_SHADER_CODE = loadAssetFile(env, "shader/vertex_shader.glsl");
     //Fragment Shader(Processing pixels)
-    const char *FRAGMENT_SHADER_CODE = loadAssetFile(env, "shaders/color.glsl");
+    const char *FRAGMENT_SHADER_CODE = loadAssetFile(env, "shader/fragment_shader.glsl");
 
     Bitmap *mBitmap = getBitmap(env, bitmap);
     frame.w = mBitmap->width;
     frame.h = mBitmap->height;
     frame.pixels = mBitmap->pixels;
-    LOGI(TAG, "Format: %d", mBitmap->format);
-
-    pix16("pix", (char *) frame.pixels);
 
     LOGI(TAG, "setupGraphics(%d, %d)", w, h);
     gProgram = createProgram(VERTEX_SHADER_CODE, FRAGMENT_SHADER_CODE);
@@ -70,11 +59,7 @@ bool setGraphics(JNIEnv *env, int w, int h, jobject bitmap) {
     vertexCoordHandle = (GLuint) glGetAttribLocation(gProgram, "vertexCoord");
     matrixHandle = (GLuint) glGetUniformLocation(gProgram, "uMatrix");
     resolutionHandle = (GLuint) glGetUniformLocation(gProgram, "iResolution");
-    timeHandle = (GLuint) glGetUniformLocation(gProgram, "time");
-
-    LOGI(TAG, "sampler2DHandle:     %d", sampler2DHandle);
-    LOGI(TAG, "matrixHandle:       %d", matrixHandle);
-    LOGI(TAG, "timeHandle:         %d", timeHandle);
+    timeHandle = (GLuint) glGetUniformLocation(gProgram, "iGlobalTime");
 
     glGenTextures(1, &texture);
     checkGlError("gen Textures");
@@ -105,7 +90,6 @@ bool setGraphics(JNIEnv *env, int w, int h, jobject bitmap) {
 }
 
 void renderFrame() {
-//    long start = clock();
 
     // Clear cache
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -138,14 +122,12 @@ void renderFrame() {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, frame.w, frame.h, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                  frame.pixels);
     checkGlError("glTexImage2D");
+//    glGenerateMipmap(GL_TEXTURE_2D);
+//    glBindTexture(GL_TEXTURE_2D, 0);
     glUniform1i(sampler2DHandle, 0);
     checkGlError("set tex sampler");
 
     //Draw the basic rect
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     checkGlError("glDrawArray");
-
-//    LOGD(TAG, "Frame Info: %d x %d Data: %02x", frame.w, frame.h, ((unsigned char*)frame.pixels)[100]);
-
-    //LOGD(TAG, "OpenGL ES frame: %d", (int) ((clock() - start) / 1000));
 }

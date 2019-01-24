@@ -1,5 +1,4 @@
 precision highp float;
-uniform sampler2D tex;
 uniform float time;
 uniform vec2 iResolution;
 varying vec2 fragCoord;

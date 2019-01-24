@@ -8,7 +8,7 @@ void main()
     uv.x = 0.1*uv.y*sin(10.0*iGlobalTime) + uv.x;
     uv.y = 0.1*uv.x*sin(10.0*iGlobalTime) + uv.y;
 
-    vec4 color = texture2D(iChannel0, vec2(uv.x, 1-uv.y));
+    vec4 color = texture2D(iChannel0, vec2(uv.x, 1.0-uv.y));
     gl_FragColor = color;
 //    gl_FragColor = vec4(pow(sin(fragCoord.x), 2.0), pow(sin(fragCoord.y), 2.0), pow(sin(time), 2.0), 1.0);
 }
