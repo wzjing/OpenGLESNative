@@ -71,15 +71,15 @@ GLuint createProgram(const char *pVertexSource, const char *pFragmentSource) {
     GLuint vertexShader = loadShader(GL_VERTEX_SHADER, pVertexSource);
     if (!vertexShader)
         return 0;
-    GLuint pixelShader = loadShader(GL_FRAGMENT_SHADER, pFragmentSource);
-    if (!pixelShader)
+    GLuint fragmentShader = loadShader(GL_FRAGMENT_SHADER, pFragmentSource);
+    if (!fragmentShader)
         return 0;
 
     GLuint program = glCreateProgram();
     if (program) {
         glAttachShader(program, vertexShader);
         checkGlError("glAttachVertexShader");
-        glAttachShader(program, pixelShader);
+        glAttachShader(program, fragmentShader);
         checkGlError("glAttachPixelShader");
         glLinkProgram(program);
         GLint linkStatus = GL_FALSE;

@@ -8,13 +8,12 @@
 #include "native-utils.h"
 #include "gl-utils.h"
 
-extern "C" {
-JNIEXPORT void
+
+extern "C" JNIEXPORT void
 JNICALL Java_com_wzjing_paint_GLESView_initGLES(JNIEnv * env, jobject, jint w, jint h, jobject bitmap);
 
-JNIEXPORT void
+extern "C" JNIEXPORT void
 JNICALL Java_com_wzjing_paint_GLESView_step(JNIEnv * env, jobject);
-}
 
 typedef struct Frame {
     int w;

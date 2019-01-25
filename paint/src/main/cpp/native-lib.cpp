@@ -75,6 +75,16 @@ bool setGraphics(JNIEnv *env, int w, int h, jobject bitmap) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
+    //Configure the texture data
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, frame.w, frame.h, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 frame.pixels);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    glUniform1i(sampler2DHandle, 0);
+//    glBindTexture(GL_TEXTURE_2D, 0);
+
+
     glViewport(0, 0, w, h);
     checkGlError("glViewport");
     LOGI(TAG, "Width: %d, Height: %d", w, h);
@@ -114,19 +124,6 @@ void renderFrame() {
     checkGlError("VertexBuffer");
     glEnableVertexAttribArray(vertexCoordHandle);
     checkGlError("vertexHandle");
-
-    //Configure the texture data
-    glActiveTexture(GL_TEXTURE0);
-    checkGlError("active Texture");
-    glBindTexture(GL_TEXTURE_2D, texture);
-    checkGlError("bind Texture");
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, frame.w, frame.h, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                 frame.pixels);
-    checkGlError("glTexImage2D");
-//    glGenerateMipmap(GL_TEXTURE_2D);
-//    glBindTexture(GL_TEXTURE_2D, 0);
-    glUniform1i(sampler2DHandle, 0);
-    checkGlError("set tex sampler");
 
     //Draw the basic rect
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
