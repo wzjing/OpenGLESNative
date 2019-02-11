@@ -20,7 +20,7 @@ JNICALL Java_com_wzjing_paint_GLESView_step(JNIEnv *, jobject) {
 
 float size[2];
 
-float vertexBuffer[8] = {-0.6f, -1.0f, 0.6f, -1.0f, -0.6f, 1.0f, 0.6f, 1.0f};
+float vertexBuffer[8] = {-1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f};
 
 GLuint sampler2DHandle;
 GLuint vertexPositionHandle;
@@ -43,8 +43,10 @@ bool setGraphics(JNIEnv *env, int w, int h, jobject bitmap) {
 
     //Vertex Shader(Processing vertex position)
     const char *VERTEX_SHADER_CODE = loadAssetFile(env, "shader/vertex_shader.glsl");
+//    LOGI(TAG, "Vertex Shader: \n%s", VERTEX_SHADER_CODE);
     //Fragment Shader(Processing pixels)
     const char *FRAGMENT_SHADER_CODE = loadAssetFile(env, "shader/fragment_test.glsl");
+//    LOGI(TAG, "Fragment Shader: \n%s", FRAGMENT_SHADER_CODE);
 
     Bitmap *mBitmap = getBitmap(env, bitmap);
     frame.w = mBitmap->width;

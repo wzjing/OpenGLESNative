@@ -4,10 +4,6 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -34,9 +30,6 @@ class MainActivity : AppCompatActivity() {
                         window.decorView.systemUiVisibility = uiHide
                     }
                 }.start()
-//                GlobalScope.launch {
-//                    delay(1000)
-//                }
             } else {
                 Log.w(TAG, "System bars invisible")
             }
