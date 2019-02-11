@@ -1,12 +1,12 @@
+#version 300 es
 precision highp float;
-uniform sampler2D tex;
-uniform float time;
+out vec4 fragmentColor;
+uniform float iGlobalTime;
 uniform vec2 iResolution;
-varying vec2 fragCoord;
 
 void main()
 {
-    float speed = time*2.0;
+    float speed = iGlobalTime*2.0;
     vec2 uv = (gl_FragCoord.xy / iResolution.xy-0.5)*8.0;
     vec2 uv0=uv;
     float i0=1.0;
@@ -28,5 +28,5 @@ void main()
     float r=sin(uv.x-speed)*0.5+0.5;
     float b=sin(uv.y+speed)*0.5+0.5;
     float g=sin((uv.x+uv.y+sin(speed*0.5))*0.5)*0.5+0.5;
-    gl_FragColor = vec4(r,g,b,1.0);
+    fragmentColor = vec4(r,g,b,1.0);
 }

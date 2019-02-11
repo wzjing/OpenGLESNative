@@ -2,6 +2,11 @@
 #include "native-lib.h"
 #include "native-utils.h"
 
+#define GLM_FORCE_CXX11
+
+#include "glm/glm.hpp"
+#include "glm/ext.hpp"
+
 extern "C" JNIEXPORT void
 JNICALL
 Java_com_wzjing_paint_GLESView_initGLES(JNIEnv *env, jobject, jint w, jint h, jobject bitmap) {
@@ -15,17 +20,13 @@ JNICALL Java_com_wzjing_paint_GLESView_step(JNIEnv *, jobject) {
 
 float size[2];
 
-float vertexBuffer[8] = {-1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f};
+float vertexBuffer[8] = {-0.6f, -1.0f, 0.6f, -1.0f, -0.6f, 1.0f, 0.6f, 1.0f};
 
 GLuint sampler2DHandle;
-GLuint vertexCoordHandle;
-GLuint matrixHandle;
+GLuint vertexPositionHandle;
+GLuint mvpHandle;
 GLuint resolutionHandle;
 GLuint timeHandle;
-
-float projectionMatrix[16];
-float modelMatrix[16];
-float viewMatrix[16];
 
 GLuint texture;
 
@@ -43,7 +44,7 @@ bool setGraphics(JNIEnv *env, int w, int h, jobject bitmap) {
     //Vertex Shader(Processing vertex position)
     const char *VERTEX_SHADER_CODE = loadAssetFile(env, "shader/vertex_shader.glsl");
     //Fragment Shader(Processing pixels)
-    const char *FRAGMENT_SHADER_CODE = loadAssetFile(env, "shader/fragment_shape.glsl");
+    const char *FRAGMENT_SHADER_CODE = loadAssetFile(env, "shader/fragment_test.glsl");
 
     Bitmap *mBitmap = getBitmap(env, bitmap);
     frame.w = mBitmap->width;
@@ -58,8 +59,8 @@ bool setGraphics(JNIEnv *env, int w, int h, jobject bitmap) {
     }
 
     sampler2DHandle = (GLuint) glGetUniformLocation(gProgram, "iChannel0");
-    vertexCoordHandle = (GLuint) glGetAttribLocation(gProgram, "vertexCoord");
-    matrixHandle = (GLuint) glGetUniformLocation(gProgram, "projectionMatrix");
+    vertexPositionHandle = (GLuint) glGetAttribLocation(gProgram, "vertexPosition");
+    mvpHandle = (GLuint) glGetUniformLocation(gProgram, "mvp");
     resolutionHandle = (GLuint) glGetUniformLocation(gProgram, "iResolution");
     timeHandle = (GLuint) glGetUniformLocation(gProgram, "iGlobalTime");
 
@@ -81,10 +82,7 @@ bool setGraphics(JNIEnv *env, int w, int h, jobject bitmap) {
                  frame.pixels);
     glGenerateMipmap(GL_TEXTURE_2D);
     glUniform1i(sampler2DHandle, 0);
-//    glBindTexture(GL_TEXTURE_2D, 0);
 
-
-//    perspectiveM(projectionMatrix, 0, 45, (float)w/h, 2, 6);
     glViewport(0, 0, w, h);
     LOGI(TAG, "Width: %d, Height: %d", w, h);
 
@@ -97,6 +95,8 @@ bool setGraphics(JNIEnv *env, int w, int h, jobject bitmap) {
 
 void renderFrame() {
 
+    float sec = (float) clock() / CLOCKS_PER_SEC;
+
     // Clear cache
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
@@ -104,17 +104,30 @@ void renderFrame() {
     glUseProgram(gProgram);
 
     // Shader: iGlobalTime
-    glUniform1f(timeHandle, (float) clock() / CLOCKS_PER_SEC);
+    glUniform1f(timeHandle, sec);
 
     // Shader: iResolution
     glUniform2f(resolutionHandle, size[0], size[1]);
 
     // Shader: projectionMatrix;
-    glUniformMatrix4fv(matrixHandle, 1, GL_FALSE, projectionMatrix);
+    glm::mat4 Projection = glm::perspective(glm::radians(45.0f), (float) size[0] / size[1], 0.1f,
+                                            100.0f);
+    glm::mat4 View = glm::lookAt(
+            glm::vec3(4, 3, 3),
+            glm::vec3(0, 0, 0),
+            glm::vec3(0, 1, 0)
+    );
+    glm::mat4 Model = glm::mat4(1.0f);
+
+    float degree = 360 * sin((float) clock() / (10 * CLOCKS_PER_SEC));
+    glm::mat4 rotatedView = glm::rotate(View, degree, glm::vec3(0, 1, 0));
+
+    glm::mat4 mvp = Projection * rotatedView * Model;
+    glUniformMatrix4fv(mvpHandle, 1, GL_FALSE, &mvp[0][0]);
 
     // Vertex Handle
-    glEnableVertexAttribArray(vertexCoordHandle);
-    glVertexAttribPointer(vertexCoordHandle, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float),
+    glEnableVertexAttribArray(vertexPositionHandle);
+    glVertexAttribPointer(vertexPositionHandle, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float),
                           vertexBuffer);
 
     //Draw the basic rect

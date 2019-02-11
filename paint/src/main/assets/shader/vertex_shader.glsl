@@ -1,6 +1,7 @@
-uniform mat4 projectionMatrix;
-attribute vec4 vertexCoord;
+#version 300 es
+layout(location=0) in vec3 vertexPosition;
+uniform mat4 mvp;
 void main()
 {
-    gl_Position = vertexCoord;
+    gl_Position = mvp * vec4(vertexPosition, 1);
 }

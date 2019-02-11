@@ -22,6 +22,7 @@ class GLESView(context: Context) : GLSurfaceView(context) {
         bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.pikachu, options)
 
         setEGLContextClientVersion(2)
+//        setEGLConfigChooser()
         setRenderer(renderer)
         renderMode = RENDERMODE_CONTINUOUSLY
         Log.i(TAG, "ByteCount: ${bitmap.byteCount} ARGB8888:${bitmap.width*bitmap.height*32/4} RGB565:${bitmap.width*bitmap.height*16/4}")
