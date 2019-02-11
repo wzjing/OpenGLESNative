@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Rect
 import android.opengl.GLSurfaceView
+import android.opengl.Matrix
 import android.util.Log
 import android.view.SurfaceHolder
 
@@ -26,7 +27,7 @@ class MySurfaceView(context: Context): GLSurfaceView(context), SurfaceHolder.Cal
         renderMode = RENDERMODE_WHEN_DIRTY
     }
 
-    private fun drawFarme() {
+    private fun drawFrame() {
         val canvas = holder.lockCanvas() ?: return
         val start: Long = System.currentTimeMillis()
         canvas.drawBitmap(bitmap!!, Rect(0, 0, bitmap?.width?:0, bitmap?.height?:0), Rect(0, 0, canvas.width, canvas.height), null)
@@ -45,7 +46,7 @@ class MySurfaceView(context: Context): GLSurfaceView(context), SurfaceHolder.Cal
 //                myRenderer.update(frame)
 //                requestRender()
 //                Log.i(TAG, "Frame time: ${System.currentTimeMillis()-start} ms")
-                drawFarme()
+                drawFrame()
             }
         }.start()
 

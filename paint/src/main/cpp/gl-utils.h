@@ -6,7 +6,6 @@
 #include <android/asset_manager_jni.h>
 #include <GLES3/gl3.h>
 #include <GLES3/gl3ext.h>
-#include <EGL/egl.h>
 #include "native-utils.h"
 
 //Check OpenGL ES error
@@ -20,5 +19,8 @@ GLuint loadShader(GLenum shaderType, const char* pSource);
 
 //create OpenGL ES program by [Vertex Shader code] and [Fragment Shader code]
 GLuint createProgram(const char* pVertexSource, const char* pFragmentSource);
+
+//void perspectiveM(float* mat, int offset,
+//                  float fovy, float aspect, float zNear, float zFar);
 
 #endif //PAINT_GLUTILS_H

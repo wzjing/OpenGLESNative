@@ -1,4 +1,4 @@
-uniform mat4 uMatrix;
+uniform mat4 projectionMatrix;
 attribute vec4 vertexCoord;
 void main()
 {

@@ -24,6 +24,8 @@ GLuint resolutionHandle;
 GLuint timeHandle;
 
 float projectionMatrix[16];
+float modelMatrix[16];
+float viewMatrix[16];
 
 GLuint texture;
 
@@ -41,7 +43,7 @@ bool setGraphics(JNIEnv *env, int w, int h, jobject bitmap) {
     //Vertex Shader(Processing vertex position)
     const char *VERTEX_SHADER_CODE = loadAssetFile(env, "shader/vertex_shader.glsl");
     //Fragment Shader(Processing pixels)
-    const char *FRAGMENT_SHADER_CODE = loadAssetFile(env, "shader/fragment_shader.glsl");
+    const char *FRAGMENT_SHADER_CODE = loadAssetFile(env, "shader/fragment_shape.glsl");
 
     Bitmap *mBitmap = getBitmap(env, bitmap);
     frame.w = mBitmap->width;
@@ -57,17 +59,14 @@ bool setGraphics(JNIEnv *env, int w, int h, jobject bitmap) {
 
     sampler2DHandle = (GLuint) glGetUniformLocation(gProgram, "iChannel0");
     vertexCoordHandle = (GLuint) glGetAttribLocation(gProgram, "vertexCoord");
-    matrixHandle = (GLuint) glGetUniformLocation(gProgram, "uMatrix");
+    matrixHandle = (GLuint) glGetUniformLocation(gProgram, "projectionMatrix");
     resolutionHandle = (GLuint) glGetUniformLocation(gProgram, "iResolution");
     timeHandle = (GLuint) glGetUniformLocation(gProgram, "iGlobalTime");
 
     glGenTextures(1, &texture);
-    checkGlError("gen Textures");
     glBindTexture(GL_TEXTURE_2D, texture);
-    checkGlError("bind Textures");
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, frame.w, frame.h, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                  frame.pixels);
-    checkGlError("add a picture");
 
     //Init Texture parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -85,16 +84,13 @@ bool setGraphics(JNIEnv *env, int w, int h, jobject bitmap) {
 //    glBindTexture(GL_TEXTURE_2D, 0);
 
 
+//    perspectiveM(projectionMatrix, 0, 45, (float)w/h, 2, 6);
     glViewport(0, 0, w, h);
-    checkGlError("glViewport");
     LOGI(TAG, "Width: %d, Height: %d", w, h);
 
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-    checkGlError("glClearColor");
     glClearStencil(0);
-    checkGlError("glClearStencil");
     glClearDepthf(0);
-    checkGlError("glClearDepthf");
 
     return true;
 }
@@ -103,29 +99,24 @@ void renderFrame() {
 
     // Clear cache
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    checkGlError("glClear");
 
     // Attach GLSL shader program
     glUseProgram(gProgram);
-    checkGlError("glUseProgram");
 
-
+    // Shader: iGlobalTime
     glUniform1f(timeHandle, (float) clock() / CLOCKS_PER_SEC);
 
+    // Shader: iResolution
     glUniform2f(resolutionHandle, size[0], size[1]);
 
-    // Matrix Handle
+    // Shader: projectionMatrix;
     glUniformMatrix4fv(matrixHandle, 1, GL_FALSE, projectionMatrix);
-    checkGlError("set Matrix");
 
     // Vertex Handle
+    glEnableVertexAttribArray(vertexCoordHandle);
     glVertexAttribPointer(vertexCoordHandle, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float),
                           vertexBuffer);
-    checkGlError("VertexBuffer");
-    glEnableVertexAttribArray(vertexCoordHandle);
-    checkGlError("vertexHandle");
 
     //Draw the basic rect
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-    checkGlError("glDrawArray");
 }

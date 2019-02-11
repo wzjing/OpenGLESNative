@@ -3,11 +3,10 @@
  * License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
  * Contact: tdmaav@gmail.com
  */
-precision mediump float;
+precision lowp float;
 uniform sampler2D tex;
-uniform float time;
+uniform float iGlobalTime;
 uniform vec2 iResolution;
-varying vec2 fragCoord;
 
 const int NUM_STEPS = 8;
 const float PI	 	= 3.141592;
@@ -23,7 +22,7 @@ const float SEA_SPEED = 0.8;
 const float SEA_FREQ = 0.16;
 const vec3 SEA_BASE = vec3(0.1,0.19,0.22);
 const vec3 SEA_WATER_COLOR = vec3(0.8,0.9,0.6);
-#define SEA_TIME (1.0 + time * SEA_SPEED)
+#define SEA_TIME (1.0 + iGlobalTime * SEA_SPEED)
 const mat2 octave_m = mat2(1.6,1.2,-1.2,1.6);
 
 // math
@@ -163,7 +162,7 @@ void main() {
 	vec2 uv = gl_FragCoord.xy/iResolution.xy;
     uv = uv * 2.0 - 1.0;
     uv.x *= iResolution.x / iResolution.y;    
-    float time = time * 0.3;
+    float time = iGlobalTime * 0.3;
         
     // ray
     vec3 ang = vec3(sin(time*3.0)*0.1,sin(time)*0.2+0.3,time);    
