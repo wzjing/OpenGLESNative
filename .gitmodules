@@ -1,0 +1,3 @@
+[submodule "app/src/main/cpp/lib/glm"]
+	path = app/src/main/cpp/lib/glm
+	url = https://github.com/g-truc/glm.git
