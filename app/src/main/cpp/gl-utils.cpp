@@ -38,7 +38,7 @@ void checkGlError(const char* op) {
 void printGlInfo() {
     LOGI(TAG, "OpenGL ES: %-30s : %s", "GL Version", glGetString(GL_VERSION));
     LOGI(TAG, "OpenGL ES: %-30s : %s", "GL Shader Version", glGetString(GL_SHADING_LANGUAGE_VERSION));
-    LOGI(TAG, "OpenGL ES: %-30s : %s", "GL Vender", glGetString(GL_VENDOR));
+    LOGI(TAG, "OpenGL ES: %-30s : %s", "GL Vendor", glGetString(GL_VENDOR));
     LOGI(TAG, "OpenGL ES: %-30s : %s", "GL Renderer", glGetString(GL_RENDERER));
     LOGI(TAG, "OpenGL ES: %-30s : %s", "GL Extensions", glGetString(GL_EXTENSIONS));
 }

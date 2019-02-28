@@ -142,7 +142,7 @@ void renderFrame() {
     glUniform2f(resolutionHandle, size[0], size[1]);
 
     // Shader: projectionMatrix;
-    glm::mat4 Projection = glm::perspective(glm::radians(45.0f), (float) size[0] / size[1], 0.1f,
+    glm::mat4 Projection = glm::perspective(glm::radians(45.0f), size[0] / size[1], 0.1f,
                                             100.0f);
     glm::mat4 View = glm::lookAt(
             glm::vec3(4, 3, 3),

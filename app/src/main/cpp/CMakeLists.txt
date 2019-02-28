@@ -9,8 +9,8 @@ add_library(native-lib
         native-utils.cpp)
 
 # glm
-set(GLM_TEST_ENABLE OFF)
+SET(GLM_TEST_ENABLE OFF CACHE BOOL "disable glm test")
 add_subdirectory(lib/glm EXCLUDE_FROM_ALL)
 #target_link_libraries(native-lib PRIVATE glm)
 
-target_link_libraries(native-lib PRIVATE log jnigraphics android EGL GLESv3 z glm)
+target_link_libraries(native-lib PRIVATE glm log jnigraphics android EGL GLESv3 z)
