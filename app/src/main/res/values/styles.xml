@@ -1,12 +1,20 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="Theme.OpenGLES_Native" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLayoutInDisplayCutoutMode" tools:ignore="NewApi">shortEdges</item>
+    </style>
+
+    <style name="Theme.Main" parent="Theme.OpenGLES_Native">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar" tools:ignore="NewApi">true</item>
+        <item name="android:windowLightNavigationBar" tools:ignore="NewApi">true</item>
     </style>
 
 </resources>

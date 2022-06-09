@@ -75,7 +75,7 @@ class GLESView(context: Context) : GLSurfaceView(context) {
 
     companion object {
         init {
-            System.loadLibrary("native-lib")
+            System.loadLibrary("gl-engine")
         }
     }
 

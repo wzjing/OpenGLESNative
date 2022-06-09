@@ -1,6 +1,6 @@
 #include <android/bitmap.h>
 #include <EGL/egl.h>
-#include "native-lib.h"
+#include "gl-engine.h"
 #include "native-utils.h"
 
 #define GLM_FORCE_CXX11
@@ -10,12 +10,12 @@
 
 extern "C" JNIEXPORT void
 JNICALL
-Java_com_wzjing_paint_GLESView_initGLES(JNIEnv *env, jobject, jint w, jint h, jobject bitmap) {
+Java_com_wzjing_openglesnative_GLESView_initGLES(JNIEnv *env, jobject, jint w, jint h, jobject bitmap) {
     setGraphics(env, w, h, bitmap);
 }
 
 extern "C" JNIEXPORT void
-JNICALL Java_com_wzjing_paint_GLESView_step(JNIEnv *, jobject) {
+JNICALL Java_com_wzjing_openglesnative_GLESView_step(JNIEnv *, jobject) {
     renderFrame();
 }
 
